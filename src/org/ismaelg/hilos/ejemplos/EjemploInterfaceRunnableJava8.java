@@ -2,12 +2,38 @@ package org.ismaelg.hilos.ejemplos;
 
 import org.ismaelg.hilos.ejemplos.runnable.ViajeTarea;
 
-public class EjemploInterfaceRunnable {
-    public static void main(String[] args) {
+public class EjemploInterfaceRunnableJava8 {
+    public static void main(String[] args) throws InterruptedException {
 
-        new Thread(new ViajeTarea("Isla de pascua")).start();
-        new Thread(new ViajeTarea("Robinson Crusoe")).start();
-        new Thread(new ViajeTarea("Juan Fernandez")).start();
-        new Thread(new ViajeTarea("Isla de Chiloe")).start();
+        Thread main = Thread.currentThread();
+        Runnable viaje = () ->  {
+                for (int i = 0; i < 10; i++){
+                    System.out.println(i + " - "+ Thread.currentThread().getName());
+                    try {
+                        Thread.sleep((long) Math.random() * 1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                System.out.println("Finalmente me voy de viaje a " + Thread.currentThread().getName());
+            System.out.println(main.getState());
+        };
+
+        Thread v1 = new Thread(viaje, "Isla de pascua");
+        Thread v2 = new Thread(viaje,"Robinson Crusoe");
+        Thread v3 = new Thread(viaje,"Juan Fernandez");
+        Thread v4 = new Thread(viaje,"Isla de Chiloe");
+
+        v1.start();
+        v2.start();
+        v3.start();
+        v4.start();
+        v1.join();
+        v2.join();
+        v3.join();
+        v4.join();
+
+        //Thread.sleep(10000);
+        System.out.println("Continuando ejecucion del metodo main: " + main.getName());
     }
 }
